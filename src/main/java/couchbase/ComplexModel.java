@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@DataObject(generateConverter = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@DataObject(generateConverter = true)
 public class ComplexModel {
 
     private String id;
