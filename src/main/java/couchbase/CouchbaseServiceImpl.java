@@ -39,7 +39,7 @@ public class CouchbaseServiceImpl implements CouchbaseService {
         return promise.future();
     }
 
-    public Future<JsonObject> get(String bucket, String key, ComplexModel complexModel) {
+    public Future<JsonObject> get(String bucket, String key) {
         //converts reactor code to reactive. This is required to allow us to be more in line with vert.x
 
 
@@ -63,7 +63,7 @@ public class CouchbaseServiceImpl implements CouchbaseService {
 
         CouchbaseService couchbaseServiceProxy = CouchbaseService.createProxy(vertx, "couchbase");
 
-        couchbaseServiceProxy.get("beer-sample", "21st_amendment_brewery_cafe", new ComplexModel())
+        couchbaseServiceProxy.get("beer-sample", "21st_amendment_brewery_cafe")
                 .onSuccess(System.out::println)
                 .onFailure(System.out::println);
 

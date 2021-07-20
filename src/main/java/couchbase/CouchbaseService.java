@@ -22,6 +22,6 @@ public interface CouchbaseService {
         return new CouchbaseServiceVertxEBProxy(vertx, address);
     }
 
-    Future<JsonObject> get(String bucket, String key, ComplexModel complexModel);
+    Future<JsonObject> get(String bucket, String key);
     Future<JsonArray> query(String query);
 }
