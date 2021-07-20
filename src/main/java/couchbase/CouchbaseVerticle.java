@@ -1,3 +1,5 @@
+package couchbase;
+
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 import io.vertx.core.AbstractVerticle;

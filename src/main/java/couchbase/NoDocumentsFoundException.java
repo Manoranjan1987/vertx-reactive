@@ -1,3 +1,5 @@
+package couchbase;
+
 public class NoDocumentsFoundException  extends Exception{
     public NoDocumentsFoundException() {
         super();

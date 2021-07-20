@@ -1,4 +1,5 @@
-import com.couchbase.client.core.error.DocumentNotFoundException;
+package couchbase;
+
 import com.couchbase.client.java.ClusterOptions;
 import com.couchbase.client.java.ReactiveCluster;
 import com.couchbase.client.java.json.JsonObject;
