@@ -8,14 +8,20 @@ import couchbase.model.QueryRequest;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.core.Single;
 
+import javax.inject.Inject;
 import java.util.concurrent.TimeUnit;
 
 public class CouchbaseRepository {
     private final ReactiveCluster reactiveCluster;
 
     public CouchbaseRepository() {
-        ClusterOptions clusterOptions = ClusterOptions.clusterOptions("test", "testing");
+        ClusterOptions clusterOptions = ClusterOptions.clusterOptions ("test", "testing");
         reactiveCluster = ReactiveCluster.connect("localhost", clusterOptions);
+    }
+
+    @Inject
+    public CouchbaseRepository(ReactiveCluster reactiveCluster) {
+        this.reactiveCluster = reactiveCluster;
     }
 
     public Observable<JsonObject> query(QueryRequest query) {

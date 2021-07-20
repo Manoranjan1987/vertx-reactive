@@ -1,26 +1,28 @@
 package couchbase;
 
-import couchbase.codec.GenericListCodec;
-import couchbase.codec.GenericModelCodec;
+import api.codec.GenericListCodec;
+import api.codec.GenericModelCodec;
 import couchbase.model.GetRequest;
 import couchbase.model.QueryRequest;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Launcher;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.ReplyException;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.rxjava3.core.RxHelper;
 import io.vertx.rxjava3.core.Vertx;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CouchbaseVerticle extends AbstractVerticle {
     private final CouchbaseRepository couchbaseRepository;
 
+    @Inject
     public CouchbaseVerticle(CouchbaseRepository couchbaseRepository) {
         this.couchbaseRepository = couchbaseRepository;
     }
@@ -38,7 +40,7 @@ public class CouchbaseVerticle extends AbstractVerticle {
                 .map(object -> new JsonObject(object.toMap())) //using map as it's more reliable than string
                 .toList()
                 .subscribe(
-                        list -> message.reply(list),
+                        message::reply,
                         cause -> {
                             if (cause instanceof NoDocumentsFoundException) {
                                 message.fail(404, cause.getMessage());

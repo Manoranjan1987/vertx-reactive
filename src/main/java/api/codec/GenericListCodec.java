@@ -1,15 +1,17 @@
-package couchbase.codec;
+package api.codec;
 
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.MessageCodec;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
+import javax.inject.Inject;
 import java.util.List;
 
 public class GenericListCodec<T extends List> implements MessageCodec<T, T> {
     private final Class<T> clazz;
 
+    @Inject
     public GenericListCodec(Class<T> clazz) {
         super();
         this.clazz = clazz;

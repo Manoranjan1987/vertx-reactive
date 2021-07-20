@@ -1,4 +1,4 @@
-package couchbase.codec;
+package api.codec;
 
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.MessageCodec;
