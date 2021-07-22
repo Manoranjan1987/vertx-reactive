@@ -1,14 +1,11 @@
-package couchbase;
+package codegen;
 
-import io.reactivex.rxjava3.core.Observable;
-import io.reactivex.rxjava3.core.Single;
+import couchbase.CouchbaseServiceVertxEBProxy;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-
-import java.util.List;
 
 @ProxyGen
 public interface CouchbaseService {

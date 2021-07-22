@@ -1,16 +1,14 @@
-package couchbase;
+package codegen;
 
 import com.couchbase.client.java.ClusterOptions;
 import com.couchbase.client.java.ReactiveCluster;
+import couchbase.NoDocumentsFoundException;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import io.vertx.core.json.jackson.JacksonCodec;
 import io.vertx.serviceproxy.ServiceBinder;
-
-import java.util.ArrayList;
 
 public class CouchbaseServiceImpl implements CouchbaseService {
     private ReactiveCluster reactiveCluster;

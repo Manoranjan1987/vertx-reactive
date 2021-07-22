@@ -2,6 +2,7 @@ package couchbase;
 
 import api.codec.GenericListCodec;
 import api.codec.GenericModelCodec;
+import com.couchbase.client.core.error.DocumentNotFoundException;
 import couchbase.model.GetRequest;
 import couchbase.model.QueryRequest;
 import io.reactivex.rxjava3.core.Flowable;
@@ -54,7 +55,13 @@ public class CouchbaseVerticle extends AbstractVerticle {
         couchbaseRepository.get(getRequest)
                 .map(jsonObject -> new JsonObject(jsonObject.toMap()))
                 .subscribe(message::reply,
-                        cause -> message.fail(500, cause.getMessage()));
+                        cause -> {
+                            if(cause instanceof DocumentNotFoundException) {
+                                message.fail(404, cause.getMessage());
+                            }else{
+                                message.fail(500, cause.getMessage());
+                            }
+                        });
     }
 
     public static void main(String[] args) {

@@ -4,11 +4,13 @@ import api.codec.GenericListCodec;
 import api.codec.GenericModelCodec;
 import api.factory.GuiceVerticleFactory;
 import api.model.Brewery;
+import api.model.BreweryRequest;
 import api.model.Geography;
 import api.module.CouchbaseRepositoryModule;
 import api.module.ReactiveClusterModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import couchbase.model.GetRequest;
 import couchbase.model.QueryRequest;
 import io.reactivex.rxjava3.core.Observable;
 import io.vertx.core.Launcher;
@@ -24,7 +26,7 @@ public class Main {
         Injector injector = setupJuice();
         Observable<String> observable = Observable.just(
                 "guice:api.controller.BreweryController",
-                "guice:api.BreweryService",
+                "guice:api.service.BreweryService",
                 "guice:couchbase.CouchbaseVerticle"
         );
         Vertx vertx = setUpVertx(injector);
@@ -55,6 +57,8 @@ public class Main {
         eventBus.getDelegate()
                 .registerDefaultCodec(Geography.class, new GenericModelCodec<>(Geography.class))
                 .registerDefaultCodec(Brewery.class, new GenericModelCodec<>(Brewery.class))
+                .registerDefaultCodec(BreweryRequest.class, new GenericModelCodec<>(BreweryRequest.class))
+                .registerDefaultCodec(GetRequest.class, new GenericModelCodec<>(GetRequest.class))
                 .registerDefaultCodec(ArrayList.class, new GenericListCodec<>(ArrayList.class))
                 .registerDefaultCodec(QueryRequest.class, new GenericModelCodec<>(QueryRequest.class));
     }

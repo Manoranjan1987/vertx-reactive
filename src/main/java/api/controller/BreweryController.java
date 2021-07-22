@@ -1,6 +1,8 @@
 package api.controller;
 
 import api.model.Brewery;
+import api.model.BreweryRequest;
+import api.model.ErrorResponse;
 import io.vertx.core.Promise;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
@@ -37,8 +39,8 @@ public class BreweryController extends AbstractVerticle {
 
     private Router createRouter() {
         Router router = Router.router(vertx);
-        router
-                .get("/breweries").handler(this::getBreweries);
+        router.get("/breweries").handler(this::getBreweries);
+        router.get("/breweries/:id").handler(this::getBrewery);
         return router;
     }
 
@@ -51,6 +53,20 @@ public class BreweryController extends AbstractVerticle {
                     cause.printStackTrace();
                     response.setStatusCode(500).end("unable to service request");
                 });
+    }
+
+    private void getBrewery(RoutingContext routingContext){
+        HttpServerResponse response = routingContext.response().getDelegate();
+        String id = routingContext.pathParam("id");
+        BreweryRequest breweryRequest = new BreweryRequest(id);
+        eventBus.<List<Brewery>>rxRequest("Breweryservice.getBrewery", breweryRequest)
+                .subscribe(results -> {
+                    response.end(responseParser.parseObject(results.body()));
+                }, cause -> {
+                    ErrorResponse errorResponse = responseParser.parseError(cause);
+                    response.setStatusCode(errorResponse.getStatusCode()).end(errorResponse.getBody());
+                });
+
     }
 
 
