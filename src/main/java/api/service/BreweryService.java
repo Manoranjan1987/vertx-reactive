@@ -38,7 +38,6 @@ public class BreweryService extends AbstractVerticle {
     public void getBrewery(Message<BreweryRequest> message){
         BreweryRequest request = message.body();
         GetRequest getRequest = new GetRequest("beer-sample", request.getId());
-
         eventBus.rxRequest("couchbase.get", getRequest)
                 .map(Message::body)
                 .subscribe(message::reply, handleError(message));

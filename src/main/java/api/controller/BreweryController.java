@@ -24,7 +24,7 @@ public class BreweryController extends AbstractVerticle {
     }
 
     @Override
-    public void start(Promise<Void> promise) throws Exception {
+    public void start(Promise<Void> promise) {
         eventBus = vertx.eventBus();
         Router router = createRouter();
         createHttpServer(router, promise);
@@ -34,7 +34,7 @@ public class BreweryController extends AbstractVerticle {
         vertx.createHttpServer()
                 .requestHandler(router)
                 .rxListen(8080)
-                .subscribe(server -> promise.complete(), System.out::println);
+                .subscribe(server -> promise.complete(), promise::fail);
     }
 
     private Router createRouter() {
@@ -46,12 +46,12 @@ public class BreweryController extends AbstractVerticle {
 
     private void getBreweries(RoutingContext routingContext) {
         HttpServerResponse response = routingContext.response().getDelegate();
-        eventBus.<List<Brewery>>rxRequest("Breweryservice.getBreweries", new JsonObject())
+        eventBus.<List<Brewery>>rxRequest("Breweryservice.getBreweries", null)
                 .subscribe(results -> {
                     response.end(responseParser.parseObject(results.body()));
                 }, cause -> {
-                    cause.printStackTrace();
-                    response.setStatusCode(500).end("unable to service request");
+                    ErrorResponse errorResponse = responseParser.parseError(cause);
+                    response.setStatusCode(errorResponse.getStatusCode()).end(errorResponse.getBody());
                 });
     }
 
