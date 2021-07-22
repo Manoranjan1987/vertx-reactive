@@ -81,6 +81,8 @@ public class BreweryService extends AbstractVerticle {
                 ReplyException replyException = (ReplyException) cause;
                 message.fail(replyException.failureCode(), replyException.getMessage());
             }else{
+                //this may never be called as the return from event bus should always be a reply exception
+                //left just in case it isn't
                 message.fail(500, cause.getMessage());
             }
         };

@@ -1,6 +1,5 @@
 package codegen;
 
-import couchbase.CouchbaseServiceVertxEBProxy;
 import io.vertx.codegen.annotations.ProxyGen;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
@@ -9,7 +8,6 @@ import io.vertx.core.json.JsonObject;
 
 @ProxyGen
 public interface CouchbaseService {
-
 
     static CouchbaseService create(Vertx vertx){
         return new CouchbaseServiceImpl(vertx);
