@@ -19,11 +19,11 @@ import java.util.ArrayList;
 
 public class Main {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         new Launcher().dispatch(args);
         Injector injector = setupJuice();
         Observable<String> observable = Observable.just(
-                "guice:api.BreweryController",
+                "guice:api.controller.BreweryController",
                 "guice:api.BreweryService",
                 "guice:couchbase.CouchbaseVerticle"
         );

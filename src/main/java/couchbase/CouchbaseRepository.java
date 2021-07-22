@@ -14,8 +14,9 @@ import java.util.concurrent.TimeUnit;
 public class CouchbaseRepository {
     private final ReactiveCluster reactiveCluster;
 
+    //just for the test main method
     public CouchbaseRepository() {
-        ClusterOptions clusterOptions = ClusterOptions.clusterOptions ("test", "testing");
+        ClusterOptions clusterOptions = ClusterOptions.clusterOptions("test", "testing");
         reactiveCluster = ReactiveCluster.connect("localhost", clusterOptions);
     }
 

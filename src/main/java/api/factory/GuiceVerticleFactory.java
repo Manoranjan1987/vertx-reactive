@@ -1,7 +1,6 @@
 package api.factory;
 
 import com.google.inject.Injector;
-import couchbase.CouchbaseVerticle;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Verticle;
@@ -10,7 +9,7 @@ import io.vertx.core.spi.VerticleFactory;
 import java.util.concurrent.Callable;
 
 public class GuiceVerticleFactory implements VerticleFactory {
-    private Injector injector;
+    private final Injector injector;
 
     public GuiceVerticleFactory(Injector injector) {
         this.injector = injector;
