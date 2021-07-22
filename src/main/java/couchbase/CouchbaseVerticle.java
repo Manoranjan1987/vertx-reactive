@@ -5,6 +5,7 @@ import api.codec.GenericModelCodec;
 import com.couchbase.client.core.error.DocumentNotFoundException;
 import couchbase.model.GetRequest;
 import couchbase.model.QueryRequest;
+import couchbase.model.UpdateRequest;
 import io.reactivex.rxjava3.core.Flowable;
 import io.reactivex.rxjava3.core.Single;
 import io.vertx.core.AbstractVerticle;
@@ -31,6 +32,7 @@ public class CouchbaseVerticle extends AbstractVerticle {
     public void start(Promise<Void> startPromise) throws Exception {
         vertx.eventBus().consumer("couchbase.query", this::query);
         vertx.eventBus().consumer("couchbase.get", this::get);
+        vertx.eventBus().consumer("couchbase.update", this::update);
         startPromise.complete();
     }
 
@@ -56,9 +58,23 @@ public class CouchbaseVerticle extends AbstractVerticle {
                 .map(jsonObject -> new JsonObject(jsonObject.toMap()))
                 .subscribe(message::reply,
                         cause -> {
-                            if(cause instanceof DocumentNotFoundException) {
+                            if (cause instanceof DocumentNotFoundException) {
                                 message.fail(404, cause.getMessage());
-                            }else{
+                            } else {
+                                message.fail(500, cause.getMessage());
+                            }
+                        });
+    }
+
+    private void update(Message<UpdateRequest> message) {
+        UpdateRequest updateRequest = message.body();
+        couchbaseRepository.update(updateRequest.getBucket(), updateRequest.getId(), com.couchbase.client.java.json.JsonObject.fromJson(updateRequest.getBody().toString()))
+                .map(jsonObject -> new JsonObject(jsonObject.toMap()))
+                .subscribe(message::reply,
+                        cause -> {
+                            if (cause instanceof DocumentNotFoundException) {
+                                message.fail(404, cause.getMessage());
+                            } else {
                                 message.fail(500, cause.getMessage());
                             }
                         });

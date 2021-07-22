@@ -50,6 +50,16 @@ public class CouchbaseRepository {
                                 emitter.onSuccess(getResult.contentAsObject()), emitter::onError));
     }
 
+    public Single<JsonObject> update(String bucket, String id, JsonObject body) {
+        return Single.create(emitter -> {
+            reactiveCluster
+                    .bucket(bucket)
+                    .defaultCollection()
+                    .upsert(id, body)
+                    .subscribe(mutationResult -> emitter.onSuccess(body), emitter::onError);
+        });
+    }
+
     public static void main(String[] args) throws InterruptedException {
         CouchbaseRepository couchbaseRepository = new CouchbaseRepository();
         couchbaseRepository.query(new QueryRequest("select `beer-sample`.* from `beer-sample` where type=\"brewery\" limit 5"))
@@ -65,4 +75,5 @@ public class CouchbaseRepository {
         System.out.println("done");
         Thread.sleep(10000);
     }
+
 }

@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class BreweryRequest {
+public class GetBreweryRequest {
     private String id;
 }

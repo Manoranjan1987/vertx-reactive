@@ -1,9 +1,12 @@
 package api.service;
 
 import api.model.Brewery;
-import api.model.BreweryRequest;
+import api.model.GetBreweryRequest;
+import api.model.UpdateBreweryRequest;
+import api.validation.BreweryValidator;
 import couchbase.model.GetRequest;
 import couchbase.model.QueryRequest;
+import couchbase.model.UpdateRequest;
 import io.reactivex.rxjava3.functions.Consumer;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.ReplyException;
@@ -12,17 +15,27 @@ import io.vertx.rxjava3.core.AbstractVerticle;
 import io.vertx.rxjava3.core.eventbus.EventBus;
 import io.vertx.rxjava3.core.eventbus.Message;
 
+import javax.inject.Inject;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class BreweryService extends AbstractVerticle {
     private EventBus eventBus;
+    private final BreweryValidator breweryValidator;
+
+    @Inject
+    public BreweryService(BreweryValidator breweryValidator) {
+        this.breweryValidator = breweryValidator;
+    }
+
+
 
     @Override
     public void start(Promise<Void> promise) throws Exception {
         eventBus = vertx.eventBus();
-        eventBus.consumer("Breweryservice.getBreweries", this::getBreweries);
-        eventBus.consumer("Breweryservice.getBrewery", this::getBrewery);
+        eventBus.consumer("BreweryService.getBreweries", this::getBreweries);
+        eventBus.consumer("BreweryService.getBrewery", this::getBrewery);
+        eventBus.consumer("BreweryService.updateBrewery", this::updateBrewery);
         super.start(promise);
     }
 
@@ -35,14 +48,32 @@ public class BreweryService extends AbstractVerticle {
 
     }
 
-    public void getBrewery(Message<BreweryRequest> message){
-        BreweryRequest request = message.body();
+    public void getBrewery(Message<GetBreweryRequest> message){
+        GetBreweryRequest request = message.body();
         GetRequest getRequest = new GetRequest("beer-sample", request.getId());
-        eventBus.rxRequest("couchbase.get", getRequest)
+        eventBus.<JsonObject>rxRequest("couchbase.get", getRequest)
                 .map(Message::body)
+                .map(result -> result.mapTo(Brewery.class))
                 .subscribe(message::reply, handleError(message));
 
     }
+
+    private void updateBrewery(Message<UpdateBreweryRequest> message) {
+        UpdateBreweryRequest updateBreweryRequest = message.body();
+        GetRequest getRequest = new GetRequest("beer-sample", updateBreweryRequest.getId());
+        eventBus.<JsonObject>rxRequest("couchbase.get", getRequest)
+                .map(Message::body)
+                .map(result -> result.mapTo(Brewery.class))
+                .map(existingDocument -> breweryValidator.validateAndMergeUpdateRequest(updateBreweryRequest, existingDocument))
+                .flatMap(newBrewery -> {
+                    UpdateRequest updateRequest = new UpdateRequest("beer-sample", updateBreweryRequest.getId(), JsonObject.mapFrom(newBrewery));
+                    return eventBus.<JsonObject>rxRequest("couchbase.update", updateRequest)
+                            .map(Message::body);
+                })
+                .map(result -> result.mapTo(Brewery.class))
+                .subscribe(message::reply, handleError(message));
+    }
+
 
     private <T> Consumer<Throwable> handleError(Message<T> message) {
         return cause -> {

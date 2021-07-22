@@ -4,14 +4,16 @@ import api.codec.GenericListCodec;
 import api.codec.GenericModelCodec;
 import api.factory.GuiceVerticleFactory;
 import api.model.Brewery;
-import api.model.BreweryRequest;
 import api.model.Geography;
+import api.model.GetBreweryRequest;
+import api.model.UpdateBreweryRequest;
 import api.module.CouchbaseRepositoryModule;
 import api.module.ReactiveClusterModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import couchbase.model.GetRequest;
 import couchbase.model.QueryRequest;
+import couchbase.model.UpdateRequest;
 import io.reactivex.rxjava3.core.Observable;
 import io.vertx.core.Launcher;
 import io.vertx.rxjava3.core.Vertx;
@@ -57,8 +59,10 @@ public class Main {
         eventBus.getDelegate()
                 .registerDefaultCodec(Geography.class, new GenericModelCodec<>(Geography.class))
                 .registerDefaultCodec(Brewery.class, new GenericModelCodec<>(Brewery.class))
-                .registerDefaultCodec(BreweryRequest.class, new GenericModelCodec<>(BreweryRequest.class))
+                .registerDefaultCodec(GetBreweryRequest.class, new GenericModelCodec<>(GetBreweryRequest.class))
                 .registerDefaultCodec(GetRequest.class, new GenericModelCodec<>(GetRequest.class))
+                .registerDefaultCodec(UpdateBreweryRequest.class, new GenericModelCodec<>(UpdateBreweryRequest.class))
+                .registerDefaultCodec(UpdateRequest.class, new GenericModelCodec<>(UpdateRequest.class))
                 .registerDefaultCodec(ArrayList.class, new GenericListCodec<>(ArrayList.class))
                 .registerDefaultCodec(QueryRequest.class, new GenericModelCodec<>(QueryRequest.class));
     }
